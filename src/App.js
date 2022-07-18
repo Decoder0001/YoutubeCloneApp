@@ -1,23 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+
+import SearchBar from "./components/SearchBar";
+import youtube from "./api/youtube";
+import VideoList from "./components/VideoList";
+import VideoDetail from "./components/VideoDetail";
 
 function App() {
+  const [videos, setVideos] = useState([]);
+  const [videoSelect, setVideoSelect] = useState(null);
+
+  useEffect(() => {
+    onTermSubmit("satisfying");
+  }, []);
+
+  const onTermSubmit = async (term) => {
+    // console.log(term);
+    const response = await youtube.get("/search", {
+      params: {
+        q: term,
+      },
+    });
+
+    // console.log(response.data.items);
+
+    setVideos(response.data.items);
+    setVideoSelect(response.data.items[0]);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="ui container">
+      <SearchBar onFormSubmit={onTermSubmit} />
+      <div className="ui grid">
+        <div className="ui row">
+          <div className="eleven wide column">
+            <VideoDetail video={videoSelect} />
+          </div>
+          <div className="five wide column">
+            <VideoList
+              videos={videos}
+              onVideoSelect={(video) => setVideoSelect(video)}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
