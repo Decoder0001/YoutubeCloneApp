@@ -6,7 +6,6 @@ function SearchBar({ onFormSubmit }) {
   const onSubmit = (e) => {
     e.preventDefault();
 
-    //TODO: MAke sure we call callbak from paren component
     onFormSubmit(term);
   };
 
